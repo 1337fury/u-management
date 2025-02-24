@@ -58,10 +58,14 @@ public class User {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 10, message = "Password must be between 6 and 10 characters")
+    @Column(length = 60) // Length for BCrypt encoded passwords
     private String password;
 
     @NotNull(message = "Role is required")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public void setRole(String role) {
+        this.role = Role.fromString(role);
+    }
 }
