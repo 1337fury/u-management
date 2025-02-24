@@ -9,6 +9,7 @@ import com.example.miniproject.model.User;
 import com.example.miniproject.repository.UserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -42,31 +44,49 @@ public class UserService {
     /**
      * Import users in batch, checking for duplicates
      */
-    @Transactional
+    private void validatePassword(String password, String username) {
+        if (password == null || password.length() < 6 || password.length() > 10) {
+            throw new IllegalArgumentException("Password for user '" + username + "' must be between 6 and 10 characters");
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public BatchImportResponse importUsers(List<User> users) {
         int totalRecords = users.size();
-        int successCount = 0;
-        int failureCount = 0;
+        List<User> successfulUsers = new ArrayList<>();
+        List<String> failedUsernames = new ArrayList<>();
 
+        // First pass: validate all users
         for (User user : users) {
             try {
-                if (!userRepository.existsByEmail(user.getEmail()) 
-                    && !userRepository.existsByUsername(user.getUsername())) {
-                    user.setPassword(passwordEncoder.encode(user.getPassword()));
-                    userRepository.save(user);
-                    successCount++;
-                } else {
-                    failureCount++;
+                if (userRepository.existsByEmail(user.getEmail())) {
+                    failedUsernames.add(user.getUsername());
+                    continue;
                 }
+                if (userRepository.existsByUsername(user.getUsername())) {
+                    failedUsernames.add(user.getUsername());
+                    continue;
+                }
+                // Validate password before encoding
+                validatePassword(user.getPassword(), user.getUsername());
+                // Encode password
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                successfulUsers.add(user);
             } catch (Exception e) {
-                failureCount++;
+                failedUsernames.add(user.getUsername());
+                log.error("Failed to process user {}: {}", user.getUsername(), e.getMessage());
             }
+        }
+
+        // Second pass: save all valid users in a single transaction
+        if (!successfulUsers.isEmpty()) {
+            userRepository.saveAll(successfulUsers);
         }
 
         return BatchImportResponse.builder()
                 .totalRecords(totalRecords)
-                .successCount(successCount)
-                .failureCount(failureCount)
+                .successCount(successfulUsers.size())
+                .failureCount(failedUsernames.size())
                 .build();
     }
 
