@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -27,16 +26,27 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // Create MVC matchers
+        org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher.Builder mvcMatcherBuilder =
+            new org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher.Builder(new org.springframework.web.servlet.handler.HandlerMappingIntrospector());
+
+        // Create Ant matcher for H2 console
+        org.springframework.security.web.util.matcher.AntPathRequestMatcher h2ConsolePathMatcher =
+            new org.springframework.security.web.util.matcher.AntPathRequestMatcher("/h2-console/**");
+
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/users/generate").permitAll()
-                .requestMatchers("/api/users/batch").permitAll()
-                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/h2-console/**").permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api/auth/**")).permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api/users/generate")).permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api/users/batch")).permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui/**")).permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api-docs/**")).permitAll()
+                .requestMatchers(h2ConsolePathMatcher).permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
@@ -45,21 +55,16 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             // Allow frames for H2 console
-            .headers(headers -> headers.frameOptions().disable());
+            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
 
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 
