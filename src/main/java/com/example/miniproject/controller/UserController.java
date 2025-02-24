@@ -2,7 +2,6 @@ package com.example.miniproject.controller;
 
 import com.example.miniproject.dto.BatchImportResponse;
 import com.example.miniproject.dto.UserResponse;
-import com.example.miniproject.model.Role;
 import com.example.miniproject.model.User;
 import com.example.miniproject.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

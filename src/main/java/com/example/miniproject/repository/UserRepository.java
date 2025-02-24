@@ -41,8 +41,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     /**
      * Find a user by username or email (for authentication)
-     * @param username the username
-     * @param email the email
+     * @param identifier the username or email
      * @return Optional containing the user if found
      */
     @Query("SELECT u FROM User u WHERE u.username = :identifier OR u.email = :identifier")
