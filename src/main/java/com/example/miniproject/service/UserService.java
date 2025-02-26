@@ -18,7 +18,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -118,9 +117,12 @@ public class UserService {
         return User.builder()
                 .firstName(firstName)
                 .lastName(lastName)
-                .birthDate(faker.date().past(36500, TimeUnit.DAYS).toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate())
+                .birthDate(faker.date().between(
+                        java.util.Date.from(java.time.LocalDate.now().minusYears(65).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        java.util.Date.from(java.time.LocalDate.now().minusYears(18).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                    ).toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate())
                 .city(faker.address().city())
                 .country(faker.address().countryCode())
                 .avatar(faker.avatar().image())
