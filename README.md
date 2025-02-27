@@ -34,7 +34,7 @@ This project is a Spring Boot application that provides REST APIs for user manag
 ### API Documentation
 
 Once the application is running, you can access:
-- Swagger UI: http://localhost:9090/swagger-ui.html
+- Swagger UI: http://localhost:9090/swagger-ui/index.html
 - API Docs: http://localhost:9090/api-docs
 - H2 Console: http://localhost:9090/h2-console
 
