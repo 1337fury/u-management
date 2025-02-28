@@ -1,14 +1,117 @@
 /fury
 .windsurfrules
-# Ignore Gradle project-specific cache directory
+
+# macOS specific files
+.DS_Store
+
+# Gradle files
 .gradle
+/build/
+/backend/bin/
+/backend/build/
+/backend/.gradle
 
-# Ignore Gradle build output directory
-build
-*.json
+# Log files
+*.log
 
+# Dependency directories
+/node_modules/
+/backend/.mvn/wrapper/
+/backend/mvnw
+/backend/mvnw.cmd
 
-# Ignore Gradle project-specific files
-build/
-out/
-bin/
+# IDE specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+
+# Build output
+/dist/
+/out/
+/target/
+
+# Frontend build files
+/frontend/.next/
+/frontend/out/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Local development files
+*.local
+
+# Temp files
+*.tmp
+*.temp
+
+# System Files
+*.swp
+*.swo
+*.swn
+*.swm
+*.swl
+
+# Generated files
+/backend/generated-sources/
+/backend/generated-test-sources/
+/backend/generated/
+/backend/reports/
+/backend/test-results/
+/backend/tmp/
+
+# Application properties
+/backend/src/main/resources/application.properties
+/backend/src/test/resources/application.properties
+
+# Postman collections
+/backend/fury/
+
+# Gradle Wrapper
+!gradle-wrapper.jar
+!gradlew
+!gradlew.bat
+
+# Frontend specific
+/frontend/.next/
+/frontend/node_modules/
+/frontend/package-lock.json
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.development
+/frontend/.env.production
+/frontend/.env.test
+
+# TypeScript build output
+/frontend/dist/
+/frontend/out/
+/frontend/.tsbuildinfo
+
+# Next.js build output
+/frontend/.next/
+/frontend/out/
+
+# ESLint cache
+.eslintcache
+
+# Prettier cache
+.prettiercache
+
+# Jest cache
+.jestcache
+
+# Cypress cache
+.cypresscache
+
+# Vercel cache
+.vercel/
+
+# Other cache directories
+.cache/
