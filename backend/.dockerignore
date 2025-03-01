@@ -1,0 +1,22 @@
+# Gradle build files
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE files
+.idea
+*.iws
+*.iml
+*.ipr
+.vscode
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+
+# Misc
+HELP.md
+.env
