@@ -183,4 +183,39 @@ The dashboard provides access to the following features:
    - Search for users by username
    - View detailed user information
 
+## Docker Setup
 
+This project is containerized using Docker, allowing for easy deployment and consistent environments.
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Running with Docker
+
+1. Clone the repository
+2. Navigate to the project root directory
+3. Build and start the containers:
+   ```bash
+   docker-compose up -d
+   ```
+4. The application will be available at:
+   - Frontend: http://localhost:3000
+   - Backend: http://localhost:9090
+   - API Documentation: http://localhost:9090/swagger-ui/index.html
+   - H2 Console: http://localhost:9090/h2-console
+
+### Stopping the Containers
+
+```bash
+docker-compose down
+```
+
+### Rebuilding the Containers
+
+If you make changes to the code, rebuild the containers:
+
+```bash
+docker-compose up -d --build
+```
